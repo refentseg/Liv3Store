@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id String @id @default(uuid())
+  name            String
+  description     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  price           Int
+  pictureUrl      String
+  type            String
+  department      String
+  variants        ProductVariant[]
+  BasketItem BasketItem[]
+  order OrderItem[]
+
+  @@map("products")
+}
+
+model Category{
+  id String @id @default(uuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@map("category")
+}
+
+model ProductVariant {
+  id String @id @default(uuid())
+  size            String
+  color           String
+  quantityInStock Int
+  productId       String           // Relationship to Product
+  product         Product          @relation(fields: [productId], references: [id],onDelete: Cascade)
+  BasketItem      BasketItem[]
+  OrderItem       OrderItem[]
+
+  @@map("product_variants")
+}
+model User {
+  id            String          @id @default(cuid())
+  password      String?
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role            @default(MEMBER)
+  accounts      Account[]
+  sessions      Session[]
+  Basket        Basket[]
+  Order         Order[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@map("users")
+}
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+
+  @@map("providers")
+}
+ 
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+ 
+model VerificationToken {
+  id         String @id @default(cuid())
+  email      String
+  token      String @unique
+  expires    DateTime
+  type TokenType
+ 
+  @@unique([email, token])
+}
+
+enum TokenType{
+  VERIFICATION
+  PASSWORD_RESET
+}
+
+enum Role{
+  MEMBER
+  ADMIN
+}
+
+model Basket {
+  id               String         @id @default(uuid()) 
+  items       BasketItem[]
+  clientSecret     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User? @relation(fields:[userId],references: [id],onDelete: Cascade)
+  userId String? @unique
+
+  @@map("baskets")
+}
+
+model BasketItem{
+  id String @id @default(uuid()) 
+  productId String 
+  product Product @relation(fields:[productId],references: [id],onDelete: Cascade)
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  quantity Int
+  basketId String 
+  basket Basket @relation(fields: [basketId],references:[id],onDelete: Cascade)
+
+  @@map("baketItems")
+
+}
+
+model ShippingAddress{
+  id  String @id @default(uuid())
+  fullName   String
+  address1   String
+  address2   String?
+  city       String
+  surburb    String
+  province   String
+  postalCode String
+  country    String
+  order      Order          @relation(fields: [orderId], references: [id])
+  orderId    String         @unique
+
+  @@map("ShippingAddress")
+}
+model OrderItem {
+  id               String            @id @default(uuid())
+  orderId          String
+  order            Order             @relation(fields: [orderId], references: [id])
+  productId        String
+  product          Product           @relation(fields: [productId], references: [id])
+  productVariantId String
+  productVariant   ProductVariant    @relation(fields: [productVariantId], references: [id])
+  quantity         Int
+
+  @@map("orderItems")
+}
+model Order{
+  id  String @id
+  shippingAdress ShippingAddress?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId       String
+  user        User @relation(fields:[userId],references: [id],onDelete: Cascade)
+  items       OrderItem[] 
+  orderStatus String
+  subtotal    Int
+  deliveryFee Int
+  vat         Int 
+  total       Int
+
+   @@map("Order")
+}
+
