@@ -21,6 +21,8 @@ This project is a modern E-Commerce platform built with Next.js, Prisma, Amazon 
 
 ## Demo Videos
 
+Click the image/s below to watch the demo videos.
+
 ### Store 
 [![E-Commerce Store Demo](https://github.com/user-attachments/assets/bd774882-8733-44d8-ba6f-3073e203d5e6)](https://youtu.be/gV97dNs4D50)
 
