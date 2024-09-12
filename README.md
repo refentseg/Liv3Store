@@ -19,6 +19,15 @@ This project is a modern E-Commerce platform built with Next.js, Prisma, Amazon 
 - **Email Service**: Amazon SES
 - **Charts and Graphs**: Recharts
 
+## Demo Videos
+
+### Store 
+[![E-Commerce Store Demo](https://img.youtube.com/vi/gV97dNs4D50/0.jpg)](https://youtu.be/gV97dNs4D50)
+
+### Admin Page
+
+[![E-Commerce Store Demo](https://img.youtube.com/vi/FvMgiYEcRMI/0.jpg)](https://youtu.be/FvMgiYEcRMI)
+
 ## Getting Started
 
 ### Prerequisites
